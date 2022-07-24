@@ -2,7 +2,7 @@
     "name": "vscode-vox",
     "displayName": "VOX Viewer for VSCode",
     "description": "Preview VOX models in VSCode",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "publisher": "tovi",
     "license": "LICENSE.md",
     "icon": "icon.png",
