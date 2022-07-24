@@ -1,0 +1,127 @@
+{
+    "name": "vscode-vox",
+    "displayName": "VOX Viewer for VSCode",
+    "description": "Preview VOX models in VSCode",
+    "version": "0.0.1",
+    "publisher": "tovi",
+    "license": "LICENSE.md",
+    "icon": "icon.png",
+    "bugs": {
+        "url": "https://github.com/stef-levesque/vscode-vox/issues"
+    },
+    "homepage": "https://github.com/stef-levesque/vscode-vox",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/stef-levesque/vscode-vox.git"
+    },
+    "galleryBanner": {
+        "color": "#0075c3",
+        "theme": "dark"
+    },
+    "engines": {
+        "vscode": "^1.49.0"
+    },
+    "keywords": [
+        "vscode",
+        "3d",
+        "mesh",
+        "viewer",
+        "webgl",
+        "3ds",
+        "dae",
+        "Collada",
+        "fbx",
+        "obj",
+        "stl"
+    ],
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "onCustomEditor:vox.viewer"
+    ],
+    "main": "./out/extension",
+    "contributes": {
+        "customEditors": [
+            {
+                "viewType": "vox.viewer",
+                "displayName": "VOX Viewer",
+                "selector": [
+                    {
+                        "filenamePattern": "*.vox"
+                    }
+                ]
+            }
+        ],
+        "configuration": {
+            "title": "vox",
+            "properties": {
+                "vox.wireframe": {
+                    "type": "boolean",
+                    "description": "Display mesh in wireframe mode",
+                    "default": false
+                },
+                "vox.background": {
+                    "type": "string",
+                    "description": "Default color for the background",
+                    "default": "#8f8f8f"
+                },
+                "vox.boundingBox": {
+                    "type": "boolean",
+                    "description": "Display a bounding box around the model",
+                    "default": false
+                },
+                "vox.grid": {
+                    "type": "boolean",
+                    "description": "Display a grid at the origin",
+                    "default": true
+                },
+                "vox.gridSize": {
+                    "type": "number",
+                    "description": "Size of the grid",
+                    "default": 32
+                },
+                "vox.near": {
+                    "type": "number",
+                    "description": "Distance for the near plane",
+                    "default": 0.01
+                },
+                "vox.far": {
+                    "type": "number",
+                    "description": "Distance for the far plane",
+                    "default": 1000000
+                },
+                "vox.limitFps": {
+                    "type": "number",
+                    "description": "Max fps (use 0 for no limit)",
+                    "default": 0
+                },
+                "vox.hotReload": {
+                    "type": "boolean",
+                    "description": "Enable hot reload mode for viewer",
+                    "default": true
+                },
+                "vox.hotReloadAutomatically": {
+                    "type": "boolean",
+                    "description": "Enable this to reload models without the question popup",
+                    "default": false
+                }
+            }
+        }
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "lint": "tslint -p ./",
+        "watch": "tsc -w -p ./"
+    },
+    "devDependencies": {
+        "@types/dat-gui": "^0.6.3",
+        "@types/mocha": "^2.2.42",
+        "@types/node": "^12.12.0",
+        "@types/three": "^0.84.30",
+        "@types/vscode": "^1.45.1",
+        "@types/webgl-ext": "0.0.31",
+        "typescript": "^3.8.3"
+    }
+}
