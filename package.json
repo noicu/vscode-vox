@@ -7,12 +7,12 @@
     "license": "LICENSE.md",
     "icon": "icon.png",
     "bugs": {
-        "url": "https://github.com/stef-levesque/vscode-vox/issues"
+        "url": "https://github.com/tovi-cn/vscode-vox/issues"
     },
-    "homepage": "https://github.com/stef-levesque/vscode-vox",
+    "homepage": "https://github.com/tovi-cn/vscode-vox",
     "repository": {
         "type": "git",
-        "url": "https://github.com/stef-levesque/vscode-vox.git"
+        "url": "https://github.com/tovi-cn/vscode-vox.git"
     },
     "galleryBanner": {
         "color": "#0075c3",
