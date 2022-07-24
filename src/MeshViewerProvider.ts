@@ -105,6 +105,7 @@ export class MeshViewerProvider implements vscode.CustomReadonlyEditorProvider<M
             near: config.get('near', 0.01),
             far: config.get('far', 1000000),
             limitFps: config.get('limitFps', 0),
+            frame: config.get('frame', 12),
             hotReloadAutomatically: config.get('hotReloadAutomatically', false)
         }
         return `<meta id="vscode-vox-data" data-settings="${JSON.stringify(initialData).replace(/"/g, '&quot;')}">`

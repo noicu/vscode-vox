@@ -2,6 +2,8 @@ const clock = new THREE.Clock();
 const userSettings = JSON.parse(document.getElementById('vscode-vox-data').getAttribute('data-settings'));
 const fpsLimit = userSettings.limitFps;
 
+let frame = userSettings.frame;
+
 const userMenu = new dat.GUI();
 const editorScene = new THREE.Scene();
 const mainScene = new THREE.Scene();
@@ -16,6 +18,7 @@ renderingFolder.add(userSettings, 'wireframe').onChange(onWireframeChange);
 renderingFolder.add(userSettings, 'grid').name('show grid').onChange((value) => { editorScene.getObjectByName('grid').visible = value; });
 renderingFolder.add(userSettings, 'gridSize').min(1).max(100).step(1).onChange(() => { editorScene.remove(editorScene.getObjectByName('grid')); createGrid(); });
 editorScene.background = new THREE.Color(userSettings.background);
+
 
 createGrid();
 
@@ -33,6 +36,18 @@ controls.update();
 
 const modelLoader = createModelLoader();
 const mixers = [];
+
+const mainObject = new THREE.Group()
+
+const animation = {
+    index: 0,
+    lastFrame: Date.now()
+}
+
+
+const animationFolder = userMenu.addFolder('Animation');
+const indexGUIController = animationFolder.add(animation, 'index').min(0).max(mainObject.children.length - 1).step(1).onChange((value) => { animation.index = value });
+animationFolder.add(userSettings, 'frame').min(0).max(120).step(1).onChange((value) => { frame = value });
 
 loadModel();
 window.addEventListener('resize', onWindowResize, false);
@@ -179,44 +194,41 @@ function onProgress(xhr) {
 function loadModel() {
     modelLoader.load(userSettings.fileToLoad, file => {
         console.log('Model loaded', file);
-        const object = file.scene ? file.scene : file.isGeometry || file.isBufferGeometry ? new THREE.Mesh(file) : file.isVOX ? new THREE.VOXMesh(file[0]) : file;   
-       
-        console.log('Object loaded', object);
 
-        object.mixer = new THREE.AnimationMixer(object);
-        mixers.push(object.mixer);
-
-        if (file.animations && file.animations.length) {
-            const action = object.mixer.clipAction(file.animations[0]);
-            action.play();
-            const animationFolder = userMenu.addFolder('Animation');
-
-            for (let i = 0; i < file.animations.length; ++i) {
-                animationFolder.add(object.mixer.clipAction(file.animations[i]), 'play').name('play animation ' + i);
-                animationFolder.add(object.mixer.clipAction(file.animations[i]), 'stop').name('stop animation ' + i);
-            }
+        for (let i = 0; i < file.length; i++) {
+            const chunk = file[i];
+            const mesh = new THREE.VOXMesh(chunk);
+            mesh.visible = false
+            mainObject.add(mesh);
         }
 
-        object.name = 'MainObject';
-        mainScene.add(object);
+        console.log('Object loaded', mainObject);
+
+
+        mainObject.name = 'MainObject';
+        mainScene.add(mainObject);
+
+        console.log('animationFolder loaded', indexGUIController);
+
+        indexGUIController.max(mainObject.children.length - 1);
 
         const transformFolder = userMenu.addFolder('Transform');
-        transformFolder.add(object.position, 'x').name('pos x');
-        transformFolder.add(object.position, 'y').name('pos y');
-        transformFolder.add(object.position, 'z').name('pos z');
+        transformFolder.add(mainObject.position, 'x').name('pos x');
+        transformFolder.add(mainObject.position, 'y').name('pos y');
+        transformFolder.add(mainObject.position, 'z').name('pos z');
 
-        transformFolder.add(object.scale, 'x').name('scale x');
-        transformFolder.add(object.scale, 'y').name('scale y');
-        transformFolder.add(object.scale, 'z').name('scale z');
+        transformFolder.add(mainObject.scale, 'x').name('scale x');
+        transformFolder.add(mainObject.scale, 'y').name('scale y');
+        transformFolder.add(mainObject.scale, 'z').name('scale z');
 
-        transformFolder.add(object.rotation, 'x').name('rot x').min(-Math.PI).max(Math.PI).step(Math.PI / 100);
-        transformFolder.add(object.rotation, 'y').name('rot y').min(-Math.PI).max(Math.PI).step(Math.PI / 100);
-        transformFolder.add(object.rotation, 'z').name('rot z').min(-Math.PI).max(Math.PI).step(Math.PI / 100);
+        transformFolder.add(mainObject.rotation, 'x').name('rot x').min(-Math.PI).max(Math.PI).step(Math.PI / 100);
+        transformFolder.add(mainObject.rotation, 'y').name('rot y').min(-Math.PI).max(Math.PI).step(Math.PI / 100);
+        transformFolder.add(mainObject.rotation, 'z').name('rot z').min(-Math.PI).max(Math.PI).step(Math.PI / 100);
 
         const modelFolder = userMenu.addFolder('Model');
-        populateModelFolder(object, modelFolder, 'visible');
+        populateModelFolder(mainObject, modelFolder, 'visible');
 
-        const boundingBox = new THREE.BoxHelper(object);
+        const boundingBox = new THREE.BoxHelper(mainObject);
         boundingBox.name = 'MainObjectBBox';
         boundingBox.visible = userSettings.boundingBox;
         editorScene.add(boundingBox);
@@ -284,14 +296,28 @@ function onBackgroundChange(color) {
 }
 
 function animate() {
+
     setTimeout(() => {
         requestAnimationFrame(animate);
 
-        if (mixers.length > 0) {
-            for (let i = 0; i < mixers.length; i++) {
-                mixers[i].update(clock.getDelta());
+        mainObject.children.forEach((child, i) => child.visible = i === animation.index)
+
+        indexGUIController.setValue(animation.index);
+
+        if (1000 / frame < Date.now() - animation.lastFrame) {
+
+            if (animation.index < mainObject.children.length - 1) {
+                animation.index++;
+            } else {
+                animation.index = 0;
             }
+
+            animation.lastFrame = Date.now();
         }
+
+
+
+
     }, fpsLimit ? (1000 / fpsLimit) : 0);
 
     render();
@@ -303,7 +329,7 @@ function render() {
 }
 
 function generateMaterials(useEnvCube) {
-    const path = 'textures/cube/Bridge2/';
+    const path = 'textures/cube/MilkyWay/';
     const urls = [
         path + 'px.jpg', path + 'nx.jpg',
         path + 'py.jpg', path + 'ny.jpg',

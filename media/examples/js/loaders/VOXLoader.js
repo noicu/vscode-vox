@@ -44,7 +44,11 @@
       const id = data.getUint32(0, true);
       const version = data.getUint32(4, true);
 
-      if (id !== 542658390 || version !== 150) {
+      const versionValid = [
+        150, 200
+      ];
+
+      if (id !== 542658390 || !versionValid.includes(version)) {
 
         console.error('Not a valid VOX file');
         return;
@@ -55,8 +59,6 @@
       let i = 8;
       let chunk;
       const chunks = [];
-
-      chunks['isVOX'] = true
 
       while (i < data.byteLength) {
 
@@ -71,6 +73,8 @@
         const chunkSize = data.getUint32(i, true);
         i += 4;
         i += 4; // childChunks
+
+        console.log(id)
 
         if (id === 'SIZE') {
 
@@ -109,7 +113,11 @@
 
           }
 
-          chunk.palette = palette;
+          // console.log(palette, 'RGBA')
+
+          chunks.forEach(chunk => {
+            chunk.palette = palette;
+          })
 
         } else {
 

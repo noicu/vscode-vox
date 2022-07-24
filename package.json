@@ -96,6 +96,11 @@
                     "description": "Max fps (use 0 for no limit)",
                     "default": 0
                 },
+                "vox.frame": {
+                    "type": "number",
+                    "description": "frame rate",
+                    "default": 12
+                },
                 "vox.hotReload": {
                     "type": "boolean",
                     "description": "Enable hot reload mode for viewer",
