@@ -26,13 +26,8 @@
         "3d",
         "mesh",
         "viewer",
-        "webgl",
-        "3ds",
-        "dae",
-        "Collada",
-        "fbx",
-        "obj",
-        "stl"
+        "vox",
+        "webgl"
     ],
     "categories": [
         "Other"
