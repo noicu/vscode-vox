@@ -7,7 +7,7 @@ Preview MagicaVoxel models in VSCode
 ## Main Features
 
 ### Model Viewer
-Support multiple formats:
+Support formats:
 * `vox` MagicaVoxel's vox format.
 
   ---
